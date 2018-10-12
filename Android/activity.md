@@ -1,5 +1,32 @@
 # Activity
 
+## 生命周期
+
+共有七个周期函数，按顺序分别是: onCreate(), onStart(), onRestart(), onResume(), onPause(),onStop(), onDestroy()。
+
+onCreate(): 创建Activity时调用，设置在该方法中，还以Bundle的形式提供对以前存储的任何状态的访问。
+
+onStart(): Activity变为在屏幕上对用户可见时调用。
+
+onResume(): Activity开始与用户交互时调用(无论是启动还是重新启动一个活动，该方法总是被调用）。
+
+onPause(): Activity被暂停或收回cpu和其他资源时调用，该方法用户保护活动状态的，也是保护现场。
+
+onStop(): Activity被停止并转为不可见阶段及后续的生命周期事件时调用。
+
+onRestart(): Activity被重新启动时调用。该活动仍然在栈中，而不是启动新的Activity。
+
+onDestroy(): Activity被销毁时调用。
+
+### 生命周期分类
+
+- 完整生命周期，Activity从出现到消失，onCreate() => onDestory()
+
+- 可见生命周期，可见但不一定可交互，onStart() => onStop()
+
+- 前景生命周期, 处于栈的顶端，可见可交互，onResume() => onPause()
+
+
 ## Activity的启动过程
 
 > 不同于Activity的生命周期
