@@ -1,15 +1,12 @@
 image: node:latest
 
-cache:
-  paths:
-    - node_modules/
-
 before_script:
-  - npm install -g gitbook-cli
+  - npm install
+  - npm install -g @angular/cli
 
 pages:
   script:
-    - gitbook build .
+  - gitbook build ./
   artifacts:
     paths:
-      - _book
+    - _book
