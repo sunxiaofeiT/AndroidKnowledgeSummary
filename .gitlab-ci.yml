@@ -2,12 +2,14 @@ image: node:latest
 
 cache:
   paths:
-  - node_modules/
+    - node_modules/
 
 before_script:
   - npm install -g gitbook-cli
 
 pages:
+  script:
+    - gitbook build ./build
   artifacts:
     paths:
-    - _book
+      - build
