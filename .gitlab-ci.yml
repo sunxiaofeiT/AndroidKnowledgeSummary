@@ -5,9 +5,9 @@ cache:
   - node_modules/
 
 before_script:
-    npm install -g gitbook-cli
+  - npm install -g gitbook-cli
 
 pages:
-    artifacts:
-        paths:
-        - _book
+  artifacts:
+    paths:
+    - _book
