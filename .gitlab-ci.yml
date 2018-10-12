@@ -6,4 +6,4 @@ pages:
   - gitbook build
   artifacts:
     paths:
-    - _book
+    - book/_book
