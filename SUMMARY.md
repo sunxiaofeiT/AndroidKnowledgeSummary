@@ -10,6 +10,7 @@
     * [AIDL](./Android/AIDL.md)
     * [UI](./Android/UI.md)
     * [数据存储](./Android/数据存储.md)
+    * [垃圾回收机制](./Android/垃圾回收机制.md)
 * [Android架构](./Android架构.md)
 * [开发工具](./AndroidStudio.md)
 * [可能的问题](./problems.md)
