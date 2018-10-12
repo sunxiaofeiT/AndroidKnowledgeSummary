@@ -3,7 +3,6 @@ image: node:latest
 before_script:
   - npm install
   - npm install -g gitbook-cli
-
 pages:
   script:
   - gitbook build ./
