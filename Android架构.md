@@ -1,6 +1,6 @@
 # Android架构
 
-![android架构](https://images0.cnblogs.com/blog/25064/201411/261107127775418.jpg)
+![android架构](https://img.zhekoustore.cn/upload/1810/8890cd2aa9835f3a.jpg)
 
 Android系统架构由5部分组成，由下到上分别是：Linux Kernel、Android Runtime、Libraries、Application Framework、Applications。
 
