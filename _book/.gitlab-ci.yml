@@ -9,7 +9,7 @@ before_script:
 
 pages:
   script:
-    - gitbook build .
+    - gitbook build ./build
   artifacts:
     paths:
-      - _book
+      - build
