@@ -51,7 +51,11 @@ AndroidManifest.xml 中Activity的android:launchMode属性。
 - singleInstance适合需要与程序分离开的页面。例如闹铃提醒，将闹铃提醒与闹铃设置分离。singleInstance不要用于中间页面，如果用于中间页面，跳转会有问题，比如：A -> B (singleInstance) -> C，完全退出后，在此启动，首先打开的是B。
 
 
-### 四大组件（生命周期，使用场景，如何启动）
+## 四大组件（生命周期，使用场景，如何启动）
+
+### 概念
+
+四大组件的概念。
 
 #### Activity
 
@@ -189,7 +193,90 @@ Messenger，在此可以理解成”信使“，通过Messenger方式返回Binde
 
 Android中Service接口中还提供了一个称之为”前台Service“的概念。通过Service.startForeground (int id, Notification notification)方法可以将此Service设置为前台Service。在UI显示上，notification将是一个处于onGoing状态的通知，使得前台Service拥有更高的进程优先级，并且Service可以直接notification通信。
 
-### Intent
+### Content Provider
+
+`Content Provider` 是Android系统提供的在多个应用之间共享数据的一种机制。
+一个Content Provider类实现了一组标准的方法接口，从而能够让其他的应用保存或读取此Content Provider的各种数据类型。
+
+- 每个ContentProvider都会对外提供一个公共的URI（包装成Uri对象），如果应用程序有数据需要共享，就需要使用ContentProvider为这些数据定义一个URI，然后其他应用程序就可以通过ContentProvider传入这个URI来对数据进行操作。
+- 我们的APP可以通过实现一个Content Provider的抽象接口将自己的数据暴露出去，也可以通过ContentResolver接口访问Content Provider提供的数据；
+- ContentResolver支持CRUD(create, retrieve, update, and delete)操作；
+- Android系统提供了诸如：音频、视频、图片、通讯录等主要数据类型的Content Provider。我们也可以创建自己的Content Provider。
+
+**URI简介**
+URI唯一标识了Provider中的数据，当应用程序访问Content Provider中的数据时，URI将会是其中一个重要参数。
+URI包含了两部分内容：
+- 要操作的Content Provider对象
+- 要操作的Content Provider中数据的类型
+
+**URI由以下几个部分组成**
+（1）Scheme：在Android中URI的Scheme是不变的，即：Content://
+（2）Authority：用于标识ContentProvider（API原文：A string that identifies the entire content provider.）；
+（3）Path：用来标识我们要操作的数据。零个或多个段，用正斜杠（/）分割;
+（4）ID：指定ID后，将操作指定ID的数据（ID也可以看成是path的一部分），ID在URI中是可选的（API原文：A unique numeric identifier for a single row in the subset of data identified by the preceding path part.）。
+
+**URI示例**
+（1）content://media/internal/images   返回设备上存储的所有图片;
+（2）content://media/internal/images /10 返回设备上存储的ID为10的图片 
+
+**操作URI经常会使用到UriMatcher和ContentUris两个类**
+UriMatcher：用于匹配Uri；
+ContentUris：用于操作Uri路径后面的ID部分，如提供了方法withAppendedId（）向URI中追加ID
+
+**注意**
+（1）访问Content Provider需要一定的操作权限；
+（2）访问Content Prvider需要使用到ContentResolver对象；
+（3）ContentResolver支持query，insert，delete，update操作；
+（4）由URI确定Content Provider中要操作的具体数据；
+（5）insert时，要添加的数据可以使用ContentValues封装。
+
+
+### Broadcast Receiver
+
+> [参考文章](https://www.cnblogs.com/engine1984/p/4140439.html)
+
+**广播的功能和特征**
+广播的生命周期很短，经过调用对象-->实现onReceive-->结束，整个过程就结束了。
+从实现的复杂度和代码量来看，广播无疑是最迷你的Android 组件，实现往往只需几行代码。广播对象被构造出来后通常只执行BroadcastReceiver.onReceive方法，便结束了其生命周期。所以有的时候我们可以把它当做函数看也未必不可。
+Android中的四大组件是 Activity、Service、Broadcast和Content Provider。而Intent是一个对动作和行为的抽象描述，负责组件之间程序之间进行消息传递。那么Broadcast Receiver组件就提供了一种把Intent作为一个消息广播出去，由所有对其感兴趣的程序对其作出反应的机制。
+和所有组件一样，广播对象也是在应用进程的主线程中被构造，所以广播对象的执行必须是要同步且快速的。也不推荐在里面开子线程，因为往往线程还未结束，广播对象就已经执行完毕被系统销毁。如果需要完成一项比较耗时的工作 , 应该通过发送 Intent 给 Service, 由 Service 来完成。
+每次广播到来时 , 会重新创建 BroadcastReceiver 对象 , 并且调用 onReceive() 方法 , 执行完以后 , 该对象即被销毁 . 当 onReceive() 方法在 10 秒内没有执行完毕， Android 会认为该程序无响应。
+
+**接收系统广播**
+广播接收器可以自由地对自己感兴趣的广播进行注册，这样当有相应的广播发出时，广播接收器就能收到该广播，并在内部处理相应的逻辑。
+
+注册广播的方式有两种：
+- 在代码中注册，动态注册，程序启动后才有效。
+    这种注册方式一帮用于更新UI等吗，优先级较高。并且此注册方式在Activity销毁时需要解绑。否则会造成内存内漏，程序出错。
+- 清单文件中注册，静态注册，程序不必启动。
+    由于这种注册是常驻型，因此会消耗CPU的资源。
+
+静态注册广播接收器可以实现开机启动。
+
+**发送广播**
+
+- 发送标准广播
+sendBroadcast()
+
+- 发送有序广播
+sendOrderedBroadcast()  
+sendOrderedBroadcast()方法接收两个参数，第二个参数是一个与权限相关的字符串，这里传入null即可
+
+在receiver中使用abortBroadcast()可以防止之后的接收器收到广播。
+
+> 广播接收器的生命周期：关键在于BroadcastReceiver中的onReceive()方法，从onReceive()里的第一行代码开始，onReceive()里的最后一行代码结束。
+> 一个广播到来的时候，用什么方式提醒用户是最友好的呢？第一种方式是吐司，第二种方式是通知。注：不要使用对话框，以免中断了用户正在进行的操作。
+
+**本地广播**
+只能在本应用程序中发送和接收广播。
+使用到了 `LocalBroadcastManager` 这个类来对广播进行管理。
+
+localBroadcastManager.sendBroadcast(intent);//调用sendBroadcast()方法发送广播
+
+> 本地广播是无法通过静态注册的方式来接收的。其实也完全可以理解，因为静态注册主要就是为了让程序在未启动的情况下也能收到广播。而发送本地广播时，我们的程序肯定是已经启动了，没有必要使用到静态注册的功能。
+
+
+## Intent
 
 Android中提供了Intent机制来协助应用间的交互与通讯，或者采用更准确的说法是，Intent不仅可用于应用程序之间，也可用于应用程序内部的activity, service和broadcast receiver之间的交互。Intent这个英语单词的本意是“目的、意向、意图”。
 Intent是一种运行时绑定（runtime binding)机制，它能在程序运行的过程中连接两个不同的组件。通过Intent，你的程序可以向Android表达某种请求或者意愿，Android会根据意愿的内容选择适当的组件来响应。 
@@ -273,40 +360,7 @@ Data属性是Android要访问的数据，和action和Category声明方式相同�
 **Intent Flags**
 期望这个intent的运行模式。
 
-## Android结构
 
-![android架构](https://images0.cnblogs.com/blog/25064/201411/261107127775418.jpg)
-
-Android系统架构由5部分组成，由下到上分别是：Linux Kernel、Android Runtime、Libraries、Application Framework、Applications。
-
-### Linux Kernel
-Android基于Linux 2.6提供核心系统服务，例如：安全、内存管理、进程管理、网络堆栈、驱动模型。Linux Kernel也作为硬件和软件之间的抽象层，它隐藏具体硬件细节而为上层提供统一的服务
-
-### Android Runtime
-Android包含一个核心库的集合，提供大部分在Java编程语言核心类库中可用的功能。每一个Android应用程序是Dalvik虚拟机中的实例，运行在他们自己的进程中。Dalvik虚拟机设计成，在一个设备可以高效地运行多个虚拟机。Dalvik虚拟机可执行文件格式是.dex，dex格式是专为Dalvik设计的一种压缩格式，适合内存和处理器速度有限的系统.
-
-### Libraries
-Android包含一个C/C++库的集合，供Android系统的各个组件使用。这些功能通过Android的应用程序框架（application framework）暴露给开发者。
-下面列出一些核心库：
-- 系统C库——标准C系统库（libc）的BSD衍生，调整为基于嵌入式Linux设备
-- 媒体库——基于PacketVideo的OpenCORE。这些库支持播放和录制许多流行的音频和视频格式，以及静态图像文件，包括MPEG4、 H.264、 MP3、 AAC、 AMR、JPG、 PNG
-- 界面管理——管理访问显示子系统和无缝组合多个应用程序的二维和三维图形层
-- LibWebCore——新式的Web浏览器引擎,驱动Android浏览器和内嵌的web视图
-- SGL——基本的2D图形引擎
-- 3D库——基于OpenGL ES 1.0 APIs的实现。库使用硬件3D加速或包含高度优化的3D软件光栅
-- FreeType ——位图和矢量字体渲染
-- SQLite ——所有应用程序都可以使用的强大而轻量级的关系数据库引擎
-
-### Application Framework
-所有的应用程序其实是一组服务和系统，包括：
-- 视图（View）——丰富的、可扩展的视图集合，可用于构建一个应用程序。包括包括列表、网格、文本框、按钮，甚至是内嵌的网页浏览器
-- 内容提供者（Content Providers）——使应用程序能访问其他应用程序（如通讯录）的数据，或共享自己的数据
-- 资源管理器（Resource Manager）——提供访问非代码资源，如本地化字符串、图形和布局文件
-- 通知管理器（Notification Manager）——使所有的应用程序能够在状态栏显示自定义警告
-- 活动管理器（Activity Manager）——管理应用程序生命周期,提供通用的导航回退功能
-
-### Application
-各种应用。
 
 
 ## 其他
