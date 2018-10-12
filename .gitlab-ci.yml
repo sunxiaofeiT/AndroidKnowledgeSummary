@@ -4,7 +4,6 @@ pages:
   script:
   - npm install -g gitbook-cli
   - gitbook build ./book
-  - mv ./book/_book ../pubilc
   artifacts:
     paths:
-    - pubilc
+    - book/_book
