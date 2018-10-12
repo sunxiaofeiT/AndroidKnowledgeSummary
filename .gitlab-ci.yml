@@ -3,7 +3,8 @@ image: node:latest
 pages:
   script:
   - npm install -g gitbook-cli
-  - gitbook build ./
+  - gitbook build ./book
+  - mv ./book/_book ../pubilc
   artifacts:
     paths:
     - book/_book
