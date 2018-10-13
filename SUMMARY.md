@@ -12,6 +12,8 @@
     * [数据存储](./Android/数据存储.md)
     * [垃圾回收机制](./Android/垃圾回收机制.md)
 * [Android架构](./Android架构.md)
+* [AndroidNDK开发](./AndroidNDK/NDJ开发.md)
+    * [JNI介绍](./AndroidNDK/JNI.md)
 * [开发工具](./AndroidStudio.md)
 * [可能的问题](./problems.md)
 * [面试题总结](./questions.md)
